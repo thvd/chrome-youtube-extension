@@ -9,49 +9,24 @@
 
 
 <script>
-
-	var playerModi = {
-		playlist: 0, single: 1
-	}
-
-	var player;
+	
+	var SimpleY = {
+		playerModi: {
+			playlist: 0, single: 1
+		},
+		videoQualities: 'small,medium,large,hd720,hd1080,highres,default'.split(',')
+	};
+	
+	
 	function onYouTubePlayerAPIReady() {
-		player = new YT.Player('player', {
-			height : '300',
-			width : '500',
-			
+		SimpleY.player = new YT.Player('player', {
+			height : '700',
+			width : '900'/*,
 			events : {
 				'onReady': onPlayerReady,
 				'onStateChange': onPlayerStateChange
-			}
+			}*/
 		});
-		//console.log(player);
-		//console.log(player.getVideoUrl());
-		
-	}
-	
-	setTimeout(function() {
-		console.error(player.getVideoUrl());
-	}, 10000);
-	
-	function onPlayerReady(event) {
-		event.target.playVideo();
-		console.log(event);
-	}
-
-	// 5. The API calls this function when the player's state changes.
-	//    The function indicates that when playing a video (state=1),
-	//    the player should play for six seconds and then stop.
-	var done = false;
-	function onPlayerStateChange(event) {
-		console.log(event);
-		if (event.data == YT.PlayerState.PLAYING && !done) {
-			//setTimeout(stopVideo, 6000);
-			done = true;
-		}
-	}
-	function stopVideo() {
-		player.stopVideo();
 	}
 	
 	
@@ -67,46 +42,61 @@
 				return;
 			}
 			
-			switch (document.getElementById('player-mode').selectedIndex) {
-				case playerModi.playlist: player.loadVideoById(chosenPlayerMode); break;
-				case playerModi.single : player.loadPlaylist(chosenPlayerMode); break;
+			switch (getPlayerMode()) {
+				case SimpleY.playerModi.playlist:	SimpleY.player.loadVideoById(chosenPlayerMode); break;
+				case SimpleY.playerModi.single:		SimpleY.player.loadPlaylist(chosenPlayerMode); break;
 			}
 			
+			var currentAvailableQualities = SimpleY.player.getAvailableQualityLevels();
+			
+			for (var i = 0; i < SimpleY.videoQualities.length; i++) {
+				if (SimpleY.videoQualities[i] in currentAvailableQualities) {
+					SimpleY.player.setPlaybackQuality(currentAvailableQualities[i]);
+					break;
+				} 
+			}
 			
 		}, false);
 		
 		
 		document.getElementById('play-pauze').addEventListener('click', function(event) {
-			switch (player.getPlayerState()) {
-			case -1: break;
-			case 0: break;
-			case 1: break;
-			case 2: break;
-			case 3: break;
-			case 4: break;
-			default:
-				break;
+			
+			switch (SimpleY.player.getPlayerState()) {
+				case YT.PlayerState.PLAYING:	SimpleY.player.pauzeVideo(); break;
+				case YT.PlayerState.PAUSED:		SimpleY.player.playVideo(); break;
+				case YT.PlayerState.BUFFERING: 	break;
+				case YT.PlayerState.CUED: 		break;
 			}
-			if ( != 1) {
-				player.pauseVideo();
-			} else {
-				player.playVideo();
-			}
+			
 		}, false);
 		
 		
+		/* next*/
 		document.getElementById('next').addEventListener('click', function(event) {
-			player.nextVideo();
+			if (getPlayerMode() == SimpleY.playerModi.playlist) {
+				SimpleY.player.nextVideo();
+			}
 		}, false);
 		
 		
 		document.getElementById('previous').addEventListener('click', function(event) {
-			player.previousVideo();
+			if (getPlayerMode() == playerModi.playlist) {
+				SimpleY.player.previousVideo();
+			}
+		}, false);
+		
+		
+		document.getElementById('volume').addEventListener('change', function(event) {
+			SimpleY.player.setVolume(event.target.value);
 		}, false);
 		
 	}, false );
 	
 	
+	
+	function getPlayerMode() {
+		return document.getElementById('player-mode').selectedIndex;
+	}
 	
 	
 	
@@ -126,7 +116,7 @@
 		<li><button id="previous">Previous</button></li>
 		<li><button id="play-pauze">Play</button></li>
 		<li><button id="next">Next</button></li>
-		<li><label><input type="range"></label></li>
+		<li><label><input type="range" min="0" max="100" step="1" id="volume"></label></li>
 	</menu>
 
 	<section id="videos"></section>
