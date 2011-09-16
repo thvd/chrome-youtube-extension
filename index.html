@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Youtube</title>
+
+<!-- script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script-->
+
+
+
+<script>
+
+	var playerModi = {
+		playlist: 0, single: 1
+	}
+
+	var player;
+	function onYouTubePlayerAPIReady() {
+		player = new YT.Player('player', {
+			height : '300',
+			width : '500',
+			
+			events : {
+				'onReady': onPlayerReady,
+				'onStateChange': onPlayerStateChange
+			}
+		});
+		//console.log(player);
+		//console.log(player.getVideoUrl());
+		
+	}
+	
+	setTimeout(function() {
+		console.error(player.getVideoUrl());
+	}, 10000);
+	
+	function onPlayerReady(event) {
+		event.target.playVideo();
+		console.log(event);
+	}
+
+	// 5. The API calls this function when the player's state changes.
+	//    The function indicates that when playing a video (state=1),
+	//    the player should play for six seconds and then stop.
+	var done = false;
+	function onPlayerStateChange(event) {
+		console.log(event);
+		if (event.data == YT.PlayerState.PLAYING && !done) {
+			//setTimeout(stopVideo, 6000);
+			done = true;
+		}
+	}
+	function stopVideo() {
+		player.stopVideo();
+	}
+	
+	
+	document.addEventListener('DOMContentLoaded', function() {
+		
+		document.getElementById('insertion').addEventListener('change', function(event) {
+			
+			var chosenPlayerMode = event.target.value;
+			
+			console.log('id: ' + chosenPlayerMode);
+			
+			if (chosenPlayerMode == '') {
+				return;
+			}
+			
+			switch (document.getElementById('player-mode').selectedIndex) {
+				case playerModi.playlist: player.loadVideoById(chosenPlayerMode); break;
+				case playerModi.single : player.loadPlaylist(chosenPlayerMode); break;
+			}
+			
+			
+		}, false);
+		
+		
+		document.getElementById('play-pauze').addEventListener('click', function(event) {
+			switch (player.getPlayerState()) {
+			case -1: break;
+			case 0: break;
+			case 1: break;
+			case 2: break;
+			case 3: break;
+			case 4: break;
+			default:
+				break;
+			}
+			if ( != 1) {
+				player.pauseVideo();
+			} else {
+				player.playVideo();
+			}
+		}, false);
+		
+		
+		document.getElementById('next').addEventListener('click', function(event) {
+			player.nextVideo();
+		}, false);
+		
+		
+		document.getElementById('previous').addEventListener('click', function(event) {
+			player.previousVideo();
+		}, false);
+		
+	}, false );
+	
+	
+	
+	
+	
+</script>
+
+
+<script src="http://www.youtube.com/player_api"></script>
+
+</head>
+<body>
+	<input type="text" id="insertion">
+	<select id="player-mode">
+		<option value="playlist"> Playlist </option>
+		<option value="single"> Single Video </option>
+	</select>
+	<menu>
+		<li><button id="previous">Previous</button></li>
+		<li><button id="play-pauze">Play</button></li>
+		<li><button id="next">Next</button></li>
+		<li><label><input type="range"></label></li>
+	</menu>
+
+	<section id="videos"></section>
+
+	<div id="player"></div>
+</body>
+</html>

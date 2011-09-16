@@ -1,0 +1,9 @@
+{
+	"name": "Youtube controller",
+	"version": "0.0",
+	"description": "The youtube extension for Google Chrome.",
+	"browser_action": {
+		"default_icon": "0.png",
+		"popup": "index.html"
+	}
+}
