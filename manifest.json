@@ -3,7 +3,9 @@
 	"version": "0.0",
 	"description": "The youtube extension for Google Chrome.",
 	"browser_action": {
-		"default_icon": "0.png",
-		"popup": "index.html"
-	}
+		"default_icon": "youtube.png",
+		"popup": "index.html",
+		"default_title": "The youtube extension for Google Chrome"
+	},
+	"background_page": "player.html"
 }

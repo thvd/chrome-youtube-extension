@@ -2,125 +2,29 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Youtube</title>
 
 <!-- script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script-->
 
+<link rel="stylesheet" href="style.css">
 
-
-<script>
-	
-	var SimpleY = {
-		playerModi: {
-			playlist: 0, single: 1
-		},
-		videoQualities: 'small,medium,large,hd720,hd1080,highres,default'.split(',')
-	};
-	
-	
-	function onYouTubePlayerAPIReady() {
-		SimpleY.player = new YT.Player('player', {
-			height : '700',
-			width : '900'/*,
-			events : {
-				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange
-			}*/
-		});
-	}
-	
-	
-	document.addEventListener('DOMContentLoaded', function() {
-		
-		document.getElementById('insertion').addEventListener('change', function(event) {
-			
-			var chosenPlayerMode = event.target.value;
-			
-			console.log('id: ' + chosenPlayerMode);
-			
-			if (chosenPlayerMode == '') {
-				return;
-			}
-			
-			switch (getPlayerMode()) {
-				case SimpleY.playerModi.playlist:	SimpleY.player.loadVideoById(chosenPlayerMode); break;
-				case SimpleY.playerModi.single:		SimpleY.player.loadPlaylist(chosenPlayerMode); break;
-			}
-			
-			var currentAvailableQualities = SimpleY.player.getAvailableQualityLevels();
-			
-			for (var i = 0; i < SimpleY.videoQualities.length; i++) {
-				if (SimpleY.videoQualities[i] in currentAvailableQualities) {
-					SimpleY.player.setPlaybackQuality(currentAvailableQualities[i]);
-					break;
-				} 
-			}
-			
-		}, false);
-		
-		
-		document.getElementById('play-pauze').addEventListener('click', function(event) {
-			
-			switch (SimpleY.player.getPlayerState()) {
-				case YT.PlayerState.PLAYING:	SimpleY.player.pauzeVideo(); break;
-				case YT.PlayerState.PAUSED:		SimpleY.player.playVideo(); break;
-				case YT.PlayerState.BUFFERING: 	break;
-				case YT.PlayerState.CUED: 		break;
-			}
-			
-		}, false);
-		
-		
-		/* next*/
-		document.getElementById('next').addEventListener('click', function(event) {
-			if (getPlayerMode() == SimpleY.playerModi.playlist) {
-				SimpleY.player.nextVideo();
-			}
-		}, false);
-		
-		
-		document.getElementById('previous').addEventListener('click', function(event) {
-			if (getPlayerMode() == playerModi.playlist) {
-				SimpleY.player.previousVideo();
-			}
-		}, false);
-		
-		
-		document.getElementById('volume').addEventListener('change', function(event) {
-			SimpleY.player.setVolume(event.target.value);
-		}, false);
-		
-	}, false );
-	
-	
-	
-	function getPlayerMode() {
-		return document.getElementById('player-mode').selectedIndex;
-	}
-	
-	
-	
-</script>
-
-
-<script src="http://www.youtube.com/player_api"></script>
+<script src="script.js"></script>
 
 </head>
 <body>
-	<input type="text" id="insertion">
-	<select id="player-mode">
-		<option value="playlist"> Playlist </option>
-		<option value="single"> Single Video </option>
-	</select>
 	<menu>
+		<li><input type="text" id="insertion"></li>
+		<li>
+			<select id="player-mode">
+				<option value="playlist">Playlist</option>
+				<option value="single">Single Video</option>
+			</select>
+		</li>
 		<li><button id="previous">Previous</button></li>
 		<li><button id="play-pauze">Play</button></li>
 		<li><button id="next">Next</button></li>
-		<li><label><input type="range" min="0" max="100" step="1" id="volume"></label></li>
+		<li><input type="range" min="0" max="100" step="1" id="volume"></li>
 	</menu>
-
-	<section id="videos"></section>
-
-	<div id="player"></div>
 </body>
 </html>
